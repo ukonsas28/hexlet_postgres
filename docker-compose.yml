@@ -1,0 +1,33 @@
+version: "3"
+networks:
+  postgres_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres
+    environment:
+    - POSTGRES_PASSWORD=root
+    - POSTGRES_USER=root
+    - POSTGRES_DB=hexlet
+    - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data_source/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - .:/var/lib/postgresql/data
+
+    networks:
+      - postgres_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 80:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=developer@mail.ru
+      - PGADMIN_DEFAULT_PASSWORD=developer
+    depends_on:
+      - postgres
+    networks:
+      - postgres_network
